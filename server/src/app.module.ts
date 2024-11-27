@@ -6,6 +6,7 @@ import { UserModule } from './modules/users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfigAsync } from './config/typeorm.config';
 import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from './modules/auth/auth.module';
 // import { DatabaseModule } from './config/database.module';
 
 
@@ -13,7 +14,7 @@ import { ConfigModule } from '@nestjs/config';
   imports: [ 
     TypeOrmModule.forRootAsync(typeOrmConfigAsync),
     ConfigModule.forRoot({ isGlobal: true }),
-    UserModule],
+    UserModule, AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })
