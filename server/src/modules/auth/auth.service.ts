@@ -1,7 +1,4 @@
 import { HttpStatus, Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Users } from "../users/entities/create-user.entity";
-import { Repository } from "typeorm";
 import { LoginDto } from "./dto/login-user.dto";
 import { comparePassword } from "src/common/hashing";
 import { JwtService } from "@nestjs/jwt";
