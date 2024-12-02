@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfigAsync } from './config/typeorm.config';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module';
+import { TransactionModule } from './modules/transaction/transaction.module';
 // import { DatabaseModule } from './config/database.module';
 
 
@@ -14,7 +15,7 @@ import { AuthModule } from './modules/auth/auth.module';
   imports: [ 
     TypeOrmModule.forRootAsync(typeOrmConfigAsync),
     ConfigModule.forRoot({ isGlobal: true }),
-    UserModule, AuthModule],
+    UserModule, AuthModule, TransactionModule],
   controllers: [AppController],
   providers: [AppService],
 })
