@@ -1,13 +1,17 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { TextField, Button, Typography, Box, Container, Grid, Link as MuiLink } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useTokenContext } from '../../contexts/AccessTokenContext';
 
 const Login = () => {
     const [loginData, setLoginData] = useState({
         email: "",
         password: "",
     });
+
+    const {accessToken, updateToken} = useTokenContext()
+    const navigate = useNavigate();
 
     const handleChange = (event) => {
         const { id, value } = event.target;
@@ -19,10 +23,13 @@ const Login = () => {
 
     const handleLogin = async () => {
         try {
-            const response = await axios.post("http://localhost:3000/auth/login", loginData);
+            const response = await axios.post("http://localhost:3001/auth/login", loginData);
 
             if (response) {
-                console.log(response.data.data);
+                const data = response.data.data;
+                console.log(data)
+                updateToken(data.access_token)
+                navigate("/home")
             }
 
             setLoginData({
