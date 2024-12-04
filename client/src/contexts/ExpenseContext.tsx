@@ -1,8 +1,20 @@
 import { createContext, useContext, useState } from "react";
 
+export interface ExpenseInterface {
+    id: string,
+    name: string,
+    amount: number,
+    description: string,
+    category: string,
+    date: string,
+    userId: string,
+    createdAt: string,
+    updatedAt: string
+}
+
 interface ExpenseContextType {
-    updateExpenses: (expenses: []) => void;
-    expenses: any[]
+    updateExpenses: (expenses: ExpenseInterface[]) => void;
+    expenses: ExpenseInterface[]
 }
 
 
@@ -13,9 +25,9 @@ interface ExpenseProviderProps {
 export const ExpenseContext = createContext<ExpenseContextType | null>(null);
 
 export const ExpenseProvider: React.FC<ExpenseProviderProps> = ({ children }) => {
-    const [expenses, setExpenses] = useState([]);
+    const [expenses, setExpenses] = useState<ExpenseInterface[]>([]);
 
-    const updateExpenses = (expenses: []) => setExpenses(expenses)
+    const updateExpenses = (expenses: ExpenseInterface[]) => setExpenses(expenses)
 
     return (
         <ExpenseContext.Provider value={{ updateExpenses, expenses }}>

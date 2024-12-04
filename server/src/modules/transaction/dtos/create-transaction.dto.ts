@@ -17,6 +17,6 @@ export class CreateTransactionDto{
     @IsNotEmpty()
     date: string; 
   
-    @IsNotEmpty()
-    userId: string
+    // @IsNotEmpty()
+    // userId: string
 }

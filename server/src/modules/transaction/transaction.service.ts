@@ -17,10 +17,11 @@ export class TransactionService {
     return this.transactionRepository.find();
   }
 
-  async addTransaction(createTransactionDto: CreateTransactionDto) {
+  async addTransaction(createTransactionDto: CreateTransactionDto, userId: string) {
+    const transactionInfo = {...createTransactionDto, userId}
 
     try {
-      await this.transactionRepository.save(createTransactionDto)
+      await this.transactionRepository.save(transactionInfo)
 
       return {
         message: "Expense Added Successfully.",
@@ -35,6 +36,7 @@ export class TransactionService {
   }
 
   async updateTransaction(updateTransactionDto: UpdateTransactionDto, transactionId : string) {
+
     try {
       const existingTransaction = await this.transactionRepository.findOne({
         where: {

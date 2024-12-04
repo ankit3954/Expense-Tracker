@@ -2,7 +2,7 @@ import { createContext, useContext, useState } from "react";
 
 interface TokenContextType {
     updateToken: (token : string) => void,
-    accessToken : string
+    getToken : () => void
 }
 
 
@@ -13,12 +13,11 @@ interface TokenProviderProps {
 export const TokenContext = createContext<TokenContextType | null>(null);
 
 export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
-    const [accessToken, setAccessToken] = useState('');
 
-    const updateToken = (accessToken: string) => setAccessToken(accessToken)
-
+    const updateToken = (accessToken: string) => localStorage.setItem("accessToken", accessToken)
+    const getToken = () => localStorage.getItem("accessToken")
     return (
-        <TokenContext.Provider value={{ updateToken, accessToken }}>
+        <TokenContext.Provider value={{ updateToken, getToken }}>
             {children}
         </TokenContext.Provider>
     )

@@ -3,27 +3,31 @@ import { Box, Button, Typography, List, ListItem, ListItemText, IconButton, Divi
 import { Add, Edit, Delete } from '@mui/icons-material';
 import { useTokenContext } from '../../contexts/AccessTokenContext';
 import axios from 'axios';
+import { ExpenseInterface, useExpenseContext } from '../../contexts/ExpenseContext';
 
 
 const Home = () => {
   // Mock data for expenses
-  const [expenses, setExpenses] = useState([
-    { id: 1, name: 'Grocery', amount: 50, date: '2024-12-01' },
-    { id: 2, name: 'Rent', amount: 500, date: '2024-12-01' },
-    { id: 3, name: 'Electricity Bill', amount: 70, date: '2024-12-01' },
-  ]);
+  // const [expenses, setExpenses] = useState([
+  //   { id: 1, name: 'Grocery', amount: 50, date: '2024-12-01' },
+  //   { id: 2, name: 'Rent', amount: 500, date: '2024-12-01' },
+  //   { id: 3, name: 'Electricity Bill', amount: 70, date: '2024-12-01' },
+  // ]);
 
-  const {accessToken, updateToken} = useTokenContext()
+  const {expenses, updateExpenses} = useExpenseContext()
+
+  const {getToken, updateToken} = useTokenContext()
 
   const fetchAllExpense = async() => {
     try {
-        console.log(accessToken)
-        const response = await axios.get("https://localhost:3001/transaction", {
+        const accessToken = getToken();
+        const response:any = await axios.get("http://localhost:3001/transaction/getFor", {
             headers: {
               Authorization: `Bearer ${accessToken}`, // Include the token here
             },
           });
     
+        updateExpenses(response.data.data.data)
         console.log(response)
     } catch (error) {
         console.log(error)
@@ -43,8 +47,10 @@ const Home = () => {
     alert(`Edit expense with ID: ${id}`);
   };
 
-  const handleDeleteExpense = (id: number) => {
-    setExpenses(expenses.filter((expense) => expense.id !== id));
+  const handleDeleteExpense = (id: string) => {
+    const remainingExpense: ExpenseInterface[] = expenses.filter((expense: ExpenseInterface) => expense.id !== id) 
+    updateExpenses(remainingExpense)
+    // updateExpenses(expenses.filter((expense: ExpenseInterface) => expense.id !== id));
   };
 
   return (
@@ -89,7 +95,7 @@ const Home = () => {
         </Box>
 
         <List>
-          {expenses.map((expense) => (
+          {expenses && expenses.map((expense) => (
             <React.Fragment key={expense.id}>
               <ListItem
                 secondaryAction={
@@ -97,7 +103,7 @@ const Home = () => {
                     <IconButton
                       edge="end"
                       color="primary"
-                      onClick={() => handleEditExpense(expense.id)}
+                      // onClick={() => handleEditExpense(expense.id)}
                       sx={{ marginRight: 1 }}
                     >
                       <Edit />

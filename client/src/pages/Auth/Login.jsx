@@ -10,7 +10,7 @@ const Login = () => {
         password: "",
     });
 
-    const {accessToken, updateToken} = useTokenContext()
+    const {getToken, updateToken} = useTokenContext()
     const navigate = useNavigate();
 
     const handleChange = (event) => {

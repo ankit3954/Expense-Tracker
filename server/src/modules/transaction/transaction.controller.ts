@@ -1,8 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards, Request} from '@nestjs/common';
 import { TransactionService } from './transaction.service';
 import { Transactions } from './entities/transaction.entity';
 import { CreateTransactionDto } from './dtos/create-transaction.dto';
 import { AuthGuard } from '../auth/auth.guard';
+import { UpdateTransactionDto } from './dtos/update-transaction.dto';
 
 @UseGuards(AuthGuard)
 @Controller('transaction')
@@ -15,13 +16,13 @@ export class TransactionController {
   }
 
   @Post('/add')
-  async addExpense(@Body() createTransactionDto: CreateTransactionDto) {
-    return this.transactionService.addTransaction(createTransactionDto);
+  async addExpense(@Body() createTransactionDto: CreateTransactionDto, @Request() req) {
+    return this.transactionService.addTransaction(createTransactionDto, req.user.id);
   }
 
   @Put('/update/:id')
-  async updateExpense(@Body() createTransactionDto: CreateTransactionDto, @Param('id') id : string) {
-    return this.transactionService.updateTransaction(createTransactionDto, id);
+  async updateExpense(@Body() updateTransactionDto: UpdateTransactionDto, @Param('id') id : string) {
+    return this.transactionService.updateTransaction(updateTransactionDto, id);
   }
 
   @Delete('/delete/:id')
@@ -34,9 +35,9 @@ export class TransactionController {
     return this.transactionService.getTransactionById(id);
   }
 
-  @Get('/getFor/:userId')
-  async getExpenseByUserId(@Param('userId') userId : string) {
-    return this.transactionService.getTransactionByUserId(userId);
+  @Get('/getFor')
+  async getExpenseByUserId(@Request() req) {
+    return this.transactionService.getTransactionByUserId(req.user.id);
   }
 
 //   @Post('/register')
