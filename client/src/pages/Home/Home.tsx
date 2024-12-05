@@ -4,6 +4,8 @@ import { Add, Edit, Delete } from '@mui/icons-material';
 import { useTokenContext } from '../../contexts/AccessTokenContext';
 import axios from 'axios';
 import { ExpenseInterface, useExpenseContext } from '../../contexts/ExpenseContext';
+import AddExpense from '../../components/Expense/AddExpense';
+import UpdateExpense from '../../components/Expense/UpdateExpense';
 
 
 const Home = () => {
@@ -17,6 +19,17 @@ const Home = () => {
   const {expenses, updateExpenses} = useExpenseContext()
 
   const {getToken, updateToken} = useTokenContext()
+
+  const [openAddModal, setOpenAddModal] = useState(false)
+  const [openUpdateModal, setOpenUpdateModal] = useState(false)
+  const [selectedExpense, setSelectedExpense] = useState<any>({
+    name: '',
+    amount: 0,
+    category: '',
+    description: '',
+    date: ''
+
+  })
 
   const fetchAllExpense = async() => {
     try {
@@ -39,18 +52,56 @@ const Home = () => {
     fetchAllExpense()
   }, [])
 
+
+  const handleOpenAddModal = async() => {
+    setOpenAddModal(true)
+  }
+
+  const handleCloseAddModal = () => {
+    setOpenAddModal(false)
+  }
+
+  const handleOpenUpdateModal = async() => {
+    setOpenUpdateModal(true)
+  }
+
+  const handleCloseUpdateModal = () => {
+    setOpenUpdateModal(false)
+  }
+
+
   const handleAddExpense = () => {
     alert('Add expense functionality not implemented yet!');
   };
 
-  const handleEditExpense = (id: number) => {
-    alert(`Edit expense with ID: ${id}`);
+  const handleEditExpense = (id: string) => {
+    // alert(`Edit expense with ID: ${id}`);
+
+    const currentExpense = expenses.find((expense) => expense.id === id)
+    setSelectedExpense(currentExpense)
+    handleOpenUpdateModal()
+
+    // console.log(selectedExpense)
   };
 
+  const deleteExpense = async(id: string) => {
+    try {
+      const accessToken = getToken()
+      const response = await axios.delete(`http://localhost:3001/transaction/delete/${id}`, {
+        headers:{
+          Authorization: `Bearer ${accessToken}`
+        }
+      })
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
   const handleDeleteExpense = (id: string) => {
-    const remainingExpense: ExpenseInterface[] = expenses.filter((expense: ExpenseInterface) => expense.id !== id) 
-    updateExpenses(remainingExpense)
-    // updateExpenses(expenses.filter((expense: ExpenseInterface) => expense.id !== id));
+    deleteExpense(id)
+    fetchAllExpense()
   };
 
   return (
@@ -88,7 +139,7 @@ const Home = () => {
             variant="contained"
             color="primary"
             startIcon={<Add />}
-            onClick={handleAddExpense}
+            onClick={handleOpenAddModal}
           >
             Add Expense
           </Button>
@@ -103,7 +154,7 @@ const Home = () => {
                     <IconButton
                       edge="end"
                       color="primary"
-                      // onClick={() => handleEditExpense(expense.id)}
+                      onClick={() => handleEditExpense(expense.id)}
                       sx={{ marginRight: 1 }}
                     >
                       <Edit />
@@ -128,6 +179,19 @@ const Home = () => {
           ))}
         </List>
       </Box>
+      <AddExpense 
+        openModal={openAddModal} 
+        handleOpenModal = {handleOpenAddModal} 
+        handleCloseModal = {handleCloseAddModal}
+        fetchAllExpense = {fetchAllExpense}
+      />
+      <UpdateExpense 
+        openModal={openUpdateModal}
+        handleCloseModal={handleCloseUpdateModal}
+        handleOpenModal={handleOpenUpdateModal}
+        fetchAllExpense={fetchAllExpense}
+        selectedExpense={selectedExpense}
+      />
     </Box>
   );
 };
