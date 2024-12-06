@@ -2,7 +2,8 @@ import { createContext, useContext, useState } from "react";
 
 interface TokenContextType {
     updateToken: (token : string) => void,
-    getToken : () => void
+    getToken : () => void,
+    deleteToken : () => void
 }
 
 
@@ -16,8 +17,10 @@ export const TokenProvider: React.FC<TokenProviderProps> = ({ children }) => {
 
     const updateToken = (accessToken: string) => localStorage.setItem("accessToken", accessToken)
     const getToken = () => localStorage.getItem("accessToken")
+    const deleteToken = () => localStorage.removeItem("accessToken")
+
     return (
-        <TokenContext.Provider value={{ updateToken, getToken }}>
+        <TokenContext.Provider value={{ updateToken, getToken, deleteToken }}>
             {children}
         </TokenContext.Provider>
     )

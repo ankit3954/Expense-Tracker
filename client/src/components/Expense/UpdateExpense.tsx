@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
     Button,
     Dialog,
@@ -23,7 +23,7 @@ interface UpdateExpenseProps {
 
  const UpdateExpense: React.FC<UpdateExpenseProps> = ({ openModal, handleCloseModal, handleOpenModal, fetchAllExpense, selectedExpense }) => {
 
-    console.log(selectedExpense)
+    console.log(selectedExpense.name)
     const [updatedExpense, setUpdatedExpense] = useState({
         name: selectedExpense.name,
         amount: selectedExpense.amount,
@@ -31,6 +31,10 @@ interface UpdateExpenseProps {
         description: selectedExpense.description,
         date: selectedExpense.date,
     });
+
+    useEffect(() =>{
+        setUpdatedExpense(selectedExpense)
+    }, [selectedExpense])
 
     const {getToken} = useTokenContext()
     const categories = ['Food', 'Transport', 'Rent', 'Utilities', 'Entertainment', 'Other'];
@@ -47,7 +51,7 @@ interface UpdateExpenseProps {
     const handleUpdateExpense = async (id: string) => {
         try {
             const accessToken = getToken()
-            const response = await axios.post(`http://localhost:3001/transaction/update/${id}`, updatedExpense,
+            const response = await axios.put(`http://localhost:3001/transaction/update/${id}`, updatedExpense,
                 {
                     headers:{
                         Authorization: `Bearer ${accessToken}`

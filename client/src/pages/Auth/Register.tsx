@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { TextField, Button, Typography, Box, Container, Grid, Link as MuiLink } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Register = () => {
     const [registerData, setRegisterData] = useState({
@@ -10,6 +10,7 @@ const Register = () => {
         password: "",
     });
 
+    const navigate = useNavigate()
     const handleChange = (event:any) => {
         const { id, value } = event.target;
         setRegisterData((prevData) => ({
@@ -20,7 +21,7 @@ const Register = () => {
 
     const handleRegister = async () => {
         try {
-            const response = await axios.post("http://localhost:3000/user/register", registerData);
+            const response = await axios.post("http://localhost:3001/user/register", registerData);
 
             if (response) {
                 console.log(response);
@@ -31,6 +32,7 @@ const Register = () => {
                 email: "",
                 password: "",
             });
+            navigate('/login')
         } catch (error) {
             console.log(error);
         }

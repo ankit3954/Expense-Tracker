@@ -6,19 +6,13 @@ import axios from 'axios';
 import { ExpenseInterface, useExpenseContext } from '../../contexts/ExpenseContext';
 import AddExpense from '../../components/Expense/AddExpense';
 import UpdateExpense from '../../components/Expense/UpdateExpense';
-
+import LogoutIcon from '@mui/icons-material/Logout';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
-  // Mock data for expenses
-  // const [expenses, setExpenses] = useState([
-  //   { id: 1, name: 'Grocery', amount: 50, date: '2024-12-01' },
-  //   { id: 2, name: 'Rent', amount: 500, date: '2024-12-01' },
-  //   { id: 3, name: 'Electricity Bill', amount: 70, date: '2024-12-01' },
-  // ]);
 
-  const {expenses, updateExpenses} = useExpenseContext()
-
-  const {getToken, updateToken} = useTokenContext()
+  const { expenses, updateExpenses } = useExpenseContext()
+  const { getToken, deleteToken } = useTokenContext()
 
   const [openAddModal, setOpenAddModal] = useState(false)
   const [openUpdateModal, setOpenUpdateModal] = useState(false)
@@ -30,30 +24,15 @@ const Home = () => {
     date: ''
 
   })
+  const navigate = useNavigate()
 
-  const fetchAllExpense = async() => {
-    try {
-        const accessToken = getToken();
-        const response:any = await axios.get("http://localhost:3001/transaction/getFor", {
-            headers: {
-              Authorization: `Bearer ${accessToken}`, // Include the token here
-            },
-          });
-    
-        updateExpenses(response.data.data.data)
-        console.log(response)
-    } catch (error) {
-        console.log(error)
-    }
-
-  }
 
   useEffect(() => {
     fetchAllExpense()
   }, [])
 
 
-  const handleOpenAddModal = async() => {
+  const handleOpenAddModal = async () => {
     setOpenAddModal(true)
   }
 
@@ -61,7 +40,7 @@ const Home = () => {
     setOpenAddModal(false)
   }
 
-  const handleOpenUpdateModal = async() => {
+  const handleOpenUpdateModal = async () => {
     setOpenUpdateModal(true)
   }
 
@@ -70,28 +49,49 @@ const Home = () => {
   }
 
 
-  const handleAddExpense = () => {
-    alert('Add expense functionality not implemented yet!');
-  };
+  const fetchAllExpense = async () => {
+    try {
+      const accessToken = getToken();
+      const response: any = await axios.get("http://localhost:3001/transaction/getFor", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`, // Include the token here
+        },
+      });
+
+      updateExpenses(response.data.data.data)
+      console.log(response)
+    } catch (error) {
+      console.log(error)
+    }
+
+  }
 
   const handleEditExpense = (id: string) => {
-    // alert(`Edit expense with ID: ${id}`);
-
     const currentExpense = expenses.find((expense) => expense.id === id)
     setSelectedExpense(currentExpense)
     handleOpenUpdateModal()
-
-    // console.log(selectedExpense)
   };
 
-  const deleteExpense = async(id: string) => {
+  const handleLogout = () => {
+    try {
+      deleteToken()
+      navigate("/")
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
+  const handleDeleteExpense = async (id: string) => {
     try {
       const accessToken = getToken()
       const response = await axios.delete(`http://localhost:3001/transaction/delete/${id}`, {
-        headers:{
+        headers: {
           Authorization: `Bearer ${accessToken}`
         }
       })
+
+      fetchAllExpense()
 
     } catch (error) {
       console.log(error)
@@ -99,14 +99,16 @@ const Home = () => {
   }
 
 
-  const handleDeleteExpense = (id: string) => {
-    deleteExpense(id)
-    fetchAllExpense()
-  };
-
   return (
     <Box sx={{ padding: 3 }}>
       {/* First Part: Graph Placeholder */}
+      <IconButton
+        edge="end"
+        color="secondary"
+        onClick={() => handleLogout()}
+      >
+        <LogoutIcon />
+      </IconButton>
       <Box
         sx={{
           height: 300,
@@ -179,13 +181,13 @@ const Home = () => {
           ))}
         </List>
       </Box>
-      <AddExpense 
-        openModal={openAddModal} 
-        handleOpenModal = {handleOpenAddModal} 
-        handleCloseModal = {handleCloseAddModal}
-        fetchAllExpense = {fetchAllExpense}
+      <AddExpense
+        openModal={openAddModal}
+        handleOpenModal={handleOpenAddModal}
+        handleCloseModal={handleCloseAddModal}
+        fetchAllExpense={fetchAllExpense}
       />
-      <UpdateExpense 
+      <UpdateExpense
         openModal={openUpdateModal}
         handleCloseModal={handleCloseUpdateModal}
         handleOpenModal={handleOpenUpdateModal}
